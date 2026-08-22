@@ -289,8 +289,8 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
 <div class="hdr">
   <div class="hdr-top">
     <div class="hdr-ttl">
-      <h1 id="proj-name" contenteditable="false" title="クリックで編集" onclick="startEditField(this,'projName')" onblur="saveProjField(this,'projName')" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">雄踏町宇布見 短期販売計画</h1>
-      <div class="sub" id="proj-sub" contenteditable="false" title="クリックで編集" onclick="startEditField(this,'projSub')" onblur="saveProjField(this,'projSub')" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">浜松市中央区雄踏町宇布見 8995-1　／　仕入決済後90日以内 早期完売プラン　／　社外秘</div>
+      <h1 id="proj-name" contenteditable="false" title="クリックで編集" onclick="startEditField(this,'projName')" onblur="saveProjField(this,'projName')" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">【再販】雄踏町宇布見 案件管理</h1>
+      <div class="sub" id="proj-sub" contenteditable="false" title="クリックで編集" onclick="startEditField(this,'projSub')" onblur="saveProjField(this,'projSub')" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">浜松市中央区雄踏町宇布見 8995-1　／　社外秘</div>
     </div>
     <div class="hdr-stats">
       <div class="stat"><span class="v" id="stat-sold">0</span><span class="l">成約区画</span></div>
@@ -662,14 +662,14 @@ const HM_LABEL = {active:'見込みあり',warm:'前向き',pending:'未打診',
 const HM_CYCLE = ['active','warm','pending','cold'];
 
 const DEF = {
-  projName:'雄踏町宇布見 短期販売計画',
+  projName:'【再販】雄踏町宇布見 案件管理',
   plans:{
     A:{label:'Aプラン（強気）',prices:[1630,1580,1580],tsubo:[28.02,27.16,27.16]},
     B:{label:'Bプラン（適正）',prices:[1530,1480,1480],tsubo:[26.30,25.44,25.44]},
     C:{label:'Cプラン（売切）',prices:[1430,1380,1380],tsubo:[24.58,23.72,23.72]},
   },
   cost:3878.18,
-  projSub:'浜松市中央区雄踏町宇布見 8995-1　／　仕入決済後90日以内 早期完売プラン　／　社外秘',
+  projSub:'浜松市中央区雄踏町宇布見 8995-1　／　社外秘',
   plots:[
     {id:1,label:'1区画',note:'★ 南西角地 — 道路付き・陽当たり優位',plan:'B',status:'active',inquiries:0,memo:''},
     {id:2,label:'2区画',note:'',plan:'B',status:'active',inquiries:0,memo:''},
