@@ -297,6 +297,7 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
       <div class="stat"><span class="v">3</span><span class="l">総区画数</span></div>
       <div class="stat"><span class="v" id="stat-days">—</span><span class="l">決済まで</span></div>
       <div class="stat"><span class="v" id="stat-profit">—</span><span class="l">計画粗利</span></div>
+      <div class="stat"><span class="v" id="stat-selling">—</span><span class="l">販売経過日</span></div>
     </div>
   </div>
   <nav class="nav">
@@ -739,6 +740,18 @@ function updateHeader(){
   const gross=Math.round(rev-(D.cost||3878.18));
   document.getElementById('stat-profit').textContent=gross+'万';
   document.getElementById('pbar').style.width=Math.round(sold/3*100)+'%';
+  const settle=new Date('2026-10-31');
+  const today=new Date();today.setHours(0,0,0,0);
+  const selEl=document.getElementById('stat-selling');
+  if(selEl){
+    if(today<settle){selEl.textContent='—';}
+    else{
+      const elapsed=Math.floor((today-settle)/86400000);
+      const allSold=D.plots.every(p=>p.status==='sold');
+      selEl.textContent=allSold?elapsed+'日で完売':'+'+elapsed+'日';
+      selEl.style.color=allSold?'var(--ok)':elapsed>90?'var(--bad)':'var(--accent)';
+    }
+  }
 }
 
 // Plots
