@@ -215,6 +215,9 @@ body{font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--text);ba
 .mem-av.pm{background:var(--accent);color:#fff}
 .mem-name{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
 .mem-role{font-size:11px;color:var(--text-m)}
+.mem-card-btns{display:flex;gap:4px;margin-top:8px;opacity:0;transition:opacity .12s}
+.mem-card:hover .mem-card-btns{opacity:1}
+@media(max-width:600px){.mem-card-btns{opacity:1}}
 /* Buttons */
 .btn-p{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
 .btn-p:hover{background:var(--accent-hv)}
@@ -442,14 +445,8 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
 <!-- チーム -->
 <div class="panel" id="tab-team">
   <h2 class="sec">👥 プロジェクト体制</h2>
-  <div class="mem-grid">
-    <div class="mem-card"><div class="mem-av" style="background:var(--warn-bg);color:var(--warn)">山</div><div class="mem-name">山本</div><div class="mem-role">課長 / 管理者</div></div>
-    <div class="mem-card"><div class="mem-av pm">磯</div><div class="mem-name">磯口</div><div class="mem-role">PM / プロジェクトリーダー</div><div class="mem-role">全フェーズ最終責任</div></div>
-    <div class="mem-card"><div class="mem-av">望</div><div class="mem-name">望月</div><div class="mem-role">営業・客付け</div></div>
-    <div class="mem-card"><div class="mem-av">成</div><div class="mem-name">成山</div><div class="mem-role">営業・客付け</div></div>
-    <div class="mem-card"><div class="mem-av">清</div><div class="mem-name">清水</div><div class="mem-role">営業・客付け</div></div>
-    <div class="mem-card"><div class="mem-av">佐</div><div class="mem-name">佐藤</div><div class="mem-role">外構担当</div></div>
-  </div>
+  <div class="mem-grid" id="team-grid"></div>
+  <button class="btn-p" style="margin-top:16px" onclick="openTeamModal()">＋ メンバー追加</button>
 </div>
 
 <!-- 資料格納 -->
@@ -622,6 +619,29 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
   </div>
 </div>
 
+<!-- チームメンバー追加/編集モーダル -->
+<div class="modal-bg" id="team-modal">
+  <div class="modal">
+    <h3 id="team-modal-ttl">👤 メンバーを追加</h3>
+    <input type="hidden" id="team-id-in" value="">
+    <label>名前 *</label>
+    <input type="text" id="team-name-in" placeholder="例：磯口">
+    <label>役割・肩書き</label>
+    <input type="text" id="team-role-in" placeholder="例：PM / プロジェクトリーダー">
+    <label>アバターカラー</label>
+    <select id="team-color-in">
+      <option value="">デフォルト（ネイビー）</option>
+      <option value="pm">PM（青塗り）</option>
+      <option value="warn">サブリーダー（オレンジ）</option>
+      <option value="ok">（グリーン）</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTeamModal()">キャンセル</button>
+      <button class="btn-p" onclick="saveTeam()">保存</button>
+    </div>
+  </div>
+</div>
+
 <!-- 価格編集モーダル -->
 <div class="modal-bg" id="budget-modal">
   <div class="modal" style="width:min(580px,95vw)">
@@ -702,6 +722,14 @@ const DEF = {
     {id:4,name:'仕入決済',note:'10/31予定',status:'todo',pct:0},
     {id:5,name:'一般公開販売',note:'10/31〜',status:'todo',pct:0},
     {id:6,name:'完売（目標）',note:'〜2027年1月末',status:'todo',pct:0},
+  ],
+  team:[
+    {id:10,name:'山本',role:'課長 / 管理者',color:'warn'},
+    {id:11,name:'磯口',role:'PM / プロジェクトリーダー',color:'pm'},
+    {id:12,name:'望月',role:'営業・客付け',color:''},
+    {id:13,name:'成山',role:'営業・客付け',color:''},
+    {id:14,name:'清水',role:'営業・客付け',color:''},
+    {id:15,name:'佐藤',role:'外構担当',color:''},
   ],
   nextId:100,
   docs:[],
@@ -1179,6 +1207,61 @@ function delPhase(id,btn){
 }
 document.getElementById('phase-modal').addEventListener('click',e=>{if(e.target===document.getElementById('phase-modal'))closePhaseModal();});
 
+// ── Team ──
+function renderTeam(){
+  const el=document.getElementById('team-grid');
+  if(!el)return;
+  const team=D.team||[];
+  el.innerHTML=team.map(m=>{
+    let avAttr='class="mem-av"';
+    if(m.color==='pm')avAttr='class="mem-av pm"';
+    else if(m.color==='warn')avAttr='class="mem-av" style="background:var(--warn-bg);color:var(--warn)"';
+    else if(m.color==='ok')avAttr='class="mem-av" style="background:var(--ok-bg);color:var(--ok)"';
+    return `<div class="mem-card">
+      <div ${avAttr}>${m.name.charAt(0)}</div>
+      <div class="mem-name">${m.name}</div>
+      <div class="mem-role">${m.role||''}</div>
+      <div class="mem-card-btns">
+        <button class="cc-btn" onclick="openTeamModal(${m.id})">編集</button>
+        <button class="cc-btn del" onclick="delTeam(${m.id},this)">削除</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openTeamModal(id){
+  const m=id?(D.team||[]).find(x=>x.id===id):null;
+  document.getElementById('team-modal-ttl').textContent=m?'✏️ メンバーを編集':'👤 メンバーを追加';
+  document.getElementById('team-id-in').value=id||'';
+  document.getElementById('team-name-in').value=m?m.name:'';
+  document.getElementById('team-role-in').value=m?m.role||'':'';
+  document.getElementById('team-color-in').value=m?m.color||'':'';
+  document.getElementById('team-modal').classList.add('on');
+}
+function closeTeamModal(){document.getElementById('team-modal').classList.remove('on');}
+function saveTeam(){
+  const name=document.getElementById('team-name-in').value.trim();
+  if(!name)return;
+  const role=document.getElementById('team-role-in').value.trim();
+  const color=document.getElementById('team-color-in').value;
+  const idStr=document.getElementById('team-id-in').value;
+  if(!D.team)D.team=[];
+  if(idStr){
+    const m=D.team.find(x=>x.id===parseInt(idStr));
+    if(m){m.name=name;m.role=role;m.color=color;}
+    save();closeTeamModal();renderTeam();toast('更新しました');
+  } else {
+    D.team.push({id:++D.nextId,name,role,color});
+    save();closeTeamModal();renderTeam();toast('追加しました');
+  }
+}
+function delTeam(id,btn){
+  safeDelete(btn,()=>{
+    D.team=(D.team||[]).filter(x=>x.id!==id);
+    save();renderTeam();toast('削除しました');
+  });
+}
+document.getElementById('team-modal').addEventListener('click',e=>{if(e.target===document.getElementById('team-modal'))closeTeamModal();});
+
 // ── Budget ──
 function renderBudget(){
   const plans=getPlans();
@@ -1428,7 +1511,7 @@ function startEditField(el,_){el.contentEditable='true';el.focus();const s=windo
 function saveProjField(el,key){el.contentEditable='false';const v=el.textContent.trim();if(v){D[key]=v;save();}else{el.textContent=D[key];}toast('更新しました');}
 
 function renderAll(){
-  renderPlots();renderMilestones();renderTasks();renderContacts();renderPhases();renderBudget();renderDocs();renderLinks();updateHeader();
+  renderPlots();renderMilestones();renderTasks();renderContacts();renderPhases();renderBudget();renderTeam();renderDocs();renderLinks();updateHeader();
   document.getElementById('proj-name').textContent=D.projName||DEF.projName;
   document.getElementById('proj-sub').textContent=D.projSub||DEF.projSub;
 }
