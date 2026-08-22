@@ -364,39 +364,10 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
 
 <!-- 収支 -->
 <div class="panel" id="tab-budget">
-  <h2 class="sec">💴 価格シナリオ比較</h2>
-  <div class="scen-grid">
-    <div class="scen sa"><div class="scen-lbl">A 強気価格</div><div class="scen-ttl">4,790万円</div><div class="scen-sub">粗利 約911万円（19.0%）</div><div class="scen-sub" style="margin-top:3px">坪単価 約27.4万/坪</div></div>
-    <div class="scen sb"><div class="scen-lbl">B 適正価格（基本）</div><div class="scen-ttl">4,490万円</div><div class="scen-sub">粗利 611万円（13.6%）</div><div class="scen-sub" style="margin-top:3px">坪単価 約25.7万/坪</div></div>
-    <div class="scen sc"><div class="scen-lbl">C 売切価格（90日〜）</div><div class="scen-ttl">4,190万円</div><div class="scen-sub">粗利 311万円（7.4%）</div><div class="scen-sub" style="margin-top:3px">坪単価 約24.0万/坪</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="btn-g" onclick="openBudgetModal()">✏️ 金額を編集</button>
   </div>
-  <h2 class="sec">📋 区画別価格内訳（各58.18坪 × 3区画）</h2>
-  <div class="card btbl-wrap" style="margin-bottom:22px">
-    <table class="btbl">
-      <thead><tr><th>区画</th><th>坪数</th><th>A価格</th><th>A坪単価</th><th>B価格</th><th>B坪単価</th><th>C価格</th><th>C坪単価</th></tr></thead>
-      <tbody>
-        <tr><td>1区画 ★南西角地</td><td>58.18坪</td><td>1,630万</td><td>28.02万</td><td>1,530万</td><td>26.30万</td><td>1,430万</td><td>24.58万</td></tr>
-        <tr><td>2区画</td><td>58.18坪</td><td>1,580万</td><td>27.16万</td><td>1,480万</td><td>25.44万</td><td>1,380万</td><td>23.72万</td></tr>
-        <tr><td>3区画</td><td>58.18坪</td><td>1,580万</td><td>27.16万</td><td>1,480万</td><td>25.44万</td><td>1,380万</td><td>23.72万</td></tr>
-      </tbody>
-      <tfoot><tr><td>合計</td><td>174.54坪</td><td>4,790万</td><td>—</td><td>4,490万</td><td>—</td><td>4,190万</td><td>—</td></tr></tfoot>
-    </table>
-  </div>
-  <h2 class="sec">📈 GMROI分析（社内基準：40%）</h2>
-  <div class="card btbl-wrap" style="margin-bottom:22px">
-    <table class="btbl">
-      <thead><tr><th>シナリオ</th><th>粗利率</th><th>年間回転</th><th>GMROI</th><th>判定</th></tr></thead>
-      <tbody>
-        <tr><td>Bプラン・90日完売（年4回転）</td><td>13.6%</td><td>×4</td><td class="g-ok">54.4%</td><td><span class="badge b-sold">◎ 社内基準の1.4倍</span></td></tr>
-        <tr><td>Bプラン・180日（年2回転）</td><td>13.6%</td><td>×2</td><td class="g-warn">27.2%</td><td><span class="badge b-inquiry">△ 社内基準を下回る</span></td></tr>
-        <tr><td>Cプラン・180日（年2回転）</td><td>7.4%</td><td>×2</td><td class="g-bad">14.8%</td><td><span class="badge" style="background:var(--bad-bg);color:var(--bad)">✕</span></td></tr>
-        <tr><td>Cプラン・270日（年1.35回転）</td><td>7.4%</td><td>×1.35</td><td class="g-bad">10.0%</td><td><span class="badge" style="background:var(--bad-bg);color:var(--bad)">✕ 最悪ケース</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="card" style="padding:13px 16px">
-    <p style="font-size:12px;color:var(--text-m);line-height:1.8"><strong style="color:var(--text)">原価合計：38,781,800円</strong>（物件価格32,000,000円 ＋ 登記・農転・分筆等881,800円 ＋ 固都税200,000円 ＋ その他諸経費5,700,000円）<br>解体費用・確定測量費は売主負担（契約書明記）。仲介手数料0円（HM直接販売前提）。<br>損失リスクなし：最悪シナリオ（Cプラン270日）でも粗利3,118,200円（7.4%）を確保。</p>
-  </div>
+  <div id="budget-content"></div>
 </div>
 
 <!-- 物件情報 -->
@@ -650,6 +621,20 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
   </div>
 </div>
 
+<!-- 価格編集モーダル -->
+<div class="modal-bg" id="budget-modal">
+  <div class="modal" style="width:min(580px,95vw)">
+    <h3>✏️ 金額を編集</h3>
+    <label>原価合計（万円）</label>
+    <input type="number" id="bm-cost" step="0.01" min="0">
+    <div id="bm-plans" style="margin-top:4px"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeBudgetModal()">キャンセル</button>
+      <button class="btn-p" onclick="saveBudget()">保存</button>
+    </div>
+  </div>
+</div>
+
 <div id="loading"><div class="spin"></div><p>データを読み込み中...</p></div>
 <div class="toast" id="toast"></div>
 
@@ -668,11 +653,7 @@ firebase.initializeApp({
 });
 const DB_REF = firebase.database().ref('ubumi');
 
-const PLANS = {
-  A:{label:'Aプラン（強気）',prices:[1630,1580,1580],tsubo:[28.02,27.16,27.16]},
-  B:{label:'Bプラン（適正）',prices:[1530,1480,1480],tsubo:[26.30,25.44,25.44]},
-  C:{label:'Cプラン（売切）',prices:[1430,1380,1380],tsubo:[24.58,23.72,23.72]},
-};
+function getPlans(){return D.plans||DEF.plans;}
 
 const ST_LABEL = {active:'情報提供前',provided:'情報提供済',inquiry:'反響あり',negotiation:'交渉中',applied:'申込済',sold:'成約済'};
 const ST_CLASS = {active:'b-active',provided:'b-hold',inquiry:'b-inquiry',negotiation:'b-inquiry',applied:'b-applied',sold:'b-sold'};
@@ -681,6 +662,12 @@ const HM_CYCLE = ['active','warm','pending','cold'];
 
 const DEF = {
   projName:'雄踏町宇布見 短期販売計画',
+  plans:{
+    A:{label:'Aプラン（強気）',prices:[1630,1580,1580],tsubo:[28.02,27.16,27.16]},
+    B:{label:'Bプラン（適正）',prices:[1530,1480,1480],tsubo:[26.30,25.44,25.44]},
+    C:{label:'Cプラン（売切）',prices:[1430,1380,1380],tsubo:[24.58,23.72,23.72]},
+  },
+  cost:3878.18,
   projSub:'浜松市中央区雄踏町宇布見 8995-1　／　仕入決済後90日以内 早期完売プラン　／　社外秘',
   plots:[
     {id:1,label:'1区画',note:'★ 南西角地 — 道路付き・陽当たり優位',plan:'B',status:'active',inquiries:0,memo:''},
@@ -748,8 +735,8 @@ function updateHeader(){
   const dec=new Date('2026-10-31');
   const diff=Math.ceil((dec-new Date())/86400000);
   document.getElementById('stat-days').textContent=diff>0?diff+'日':'決済済';
-  const rev=D.plots.reduce((s,p,i)=>s+PLANS[p.plan].prices[i],0);
-  const gross=Math.round(rev-3878.18);
+  const rev=D.plots.reduce((s,p,i)=>s+getPlans()[p.plan].prices[i],0);
+  const gross=Math.round(rev-(D.cost||3878.18));
   document.getElementById('stat-profit').textContent=gross+'万';
   document.getElementById('pbar').style.width=Math.round(sold/3*100)+'%';
 }
@@ -760,8 +747,8 @@ function renderPlots(){
   const sold=D.plots.filter(p=>p.status==='sold').length;
   const inProg=D.plots.filter(p=>['inquiry','negotiation','applied'].includes(p.status)).length;
   const inqs=D.plots.reduce((s,p)=>s+(p.inquiries||0),0);
-  const rev=D.plots.reduce((s,p,i)=>s+PLANS[p.plan].prices[i],0);
-  const gross=Math.round(rev-3878.18);
+  const rev=D.plots.reduce((s,p,i)=>s+getPlans()[p.plan].prices[i],0);
+  const gross=Math.round(rev-(D.cost||3878.18));
   document.getElementById('strip').innerHTML=`
     <div class="sum-card"><div class="sl">成約区画</div><div class="sv" style="color:var(--ok)">${sold} / 3</div><div class="ss">3区画完売目標</div></div>
     <div class="sum-card"><div class="sl">商談中</div><div class="sv" style="color:var(--warn)">${inProg}</div><div class="ss">反響・交渉・申込</div></div>
@@ -770,7 +757,7 @@ function renderPlots(){
   `;
   // Plots grid
   document.getElementById('pgrid').innerHTML=D.plots.map((p,i)=>{
-    const pd=PLANS[p.plan];
+    const pd=getPlans()[p.plan];
     return `<div class="pc">
       <div class="pc-head">
         <div>
@@ -812,7 +799,7 @@ function renderPlots(){
 
 function setPlan(id,plan){
   const p=D.plots.find(p=>p.id===id);
-  if(p){p.plan=plan;save();renderPlots();updateHeader();toast(`${p.label} を${PLANS[plan].label}に変更`);}
+  if(p){p.plan=plan;save();renderPlots();updateHeader();toast(`${p.label} を${getPlans()[plan].label}に変更`);}
 }
 function setStatus(id,st){
   const p=D.plots.find(p=>p.id===id);
@@ -1179,6 +1166,111 @@ function delPhase(id,btn){
 }
 document.getElementById('phase-modal').addEventListener('click',e=>{if(e.target===document.getElementById('phase-modal'))closePhaseModal();});
 
+// ── Budget ──
+function renderBudget(){
+  const plans=getPlans();
+  const cost=D.cost||3878.18;
+  const letters=['A','B','C'];
+  const cls={A:'sa',B:'sb',C:'sc'};
+  const totals={},grosses={},rates={},avgTsubo={};
+  letters.forEach(k=>{
+    totals[k]=plans[k].prices.reduce((a,b)=>a+b,0);
+    grosses[k]=totals[k]-cost;
+    rates[k]=Math.round(grosses[k]/totals[k]*1000)/10;
+    avgTsubo[k]=Math.round(plans[k].tsubo.reduce((a,b)=>a+b,0)/plans[k].tsubo.length*100)/100;
+  });
+  const plotRows=D.plots.map((p,i)=>`<tr>
+    <td>${p.label}</td><td>58.18坪</td>
+    <td>${plans.A.prices[i].toLocaleString()}万</td><td>${plans.A.tsubo[i]}万</td>
+    <td>${plans.B.prices[i].toLocaleString()}万</td><td>${plans.B.tsubo[i]}万</td>
+    <td>${plans.C.prices[i].toLocaleString()}万</td><td>${plans.C.tsubo[i]}万</td>
+  </tr>`).join('');
+  const totalTsubo=(D.plots.length*58.18).toFixed(2);
+  const Br=rates.B/100,Cr=rates.C/100;
+  function gmr(r,rot){return Math.round(r*rot*1000)/10;}
+  function badge(gmroi){
+    if(gmroi>=40)return `<span class="badge b-sold">◎ 社内基準の${Math.round(gmroi/40*10)/10}倍</span>`;
+    if(gmroi>=20)return `<span class="badge b-inquiry">△ 社内基準を下回る</span>`;
+    return `<span class="badge" style="background:var(--bad-bg);color:var(--bad)">✕</span>`;
+  }
+  const gmRows=[
+    {l:'Bプラン・90日完売（年4回転）',rate:rates.B,rot:4,g:gmr(Br,4),rc:'g-ok'},
+    {l:'Bプラン・180日（年2回転）',rate:rates.B,rot:2,g:gmr(Br,2),rc:'g-warn'},
+    {l:'Cプラン・180日（年2回転）',rate:rates.C,rot:2,g:gmr(Cr,2),rc:'g-bad'},
+    {l:'Cプラン・270日（年1.35回転）',rate:rates.C,rot:1.35,g:gmr(Cr,1.35),rc:'g-bad'},
+  ];
+  const el=document.getElementById('budget-content');
+  if(!el)return;
+  el.innerHTML=`
+    <h2 class="sec">💴 価格シナリオ比較</h2>
+    <div class="scen-grid">
+      ${letters.map(k=>`<div class="scen ${cls[k]}">
+        <div class="scen-lbl">${plans[k].label}</div>
+        <div class="scen-ttl">${totals[k].toLocaleString()}万円</div>
+        <div class="scen-sub">粗利 ${Math.round(grosses[k])}万円（${rates[k]}%）</div>
+        <div class="scen-sub" style="margin-top:3px">坪単価 約${avgTsubo[k]}万/坪</div>
+      </div>`).join('')}
+    </div>
+    <h2 class="sec">📋 区画別価格内訳（各58.18坪 × ${D.plots.length}区画）</h2>
+    <div class="card btbl-wrap" style="margin-bottom:22px">
+      <table class="btbl">
+        <thead><tr><th>区画</th><th>坪数</th><th>A価格</th><th>A坪単価</th><th>B価格</th><th>B坪単価</th><th>C価格</th><th>C坪単価</th></tr></thead>
+        <tbody>${plotRows}</tbody>
+        <tfoot><tr><td>合計</td><td>${totalTsubo}坪</td><td>${totals.A.toLocaleString()}万</td><td>—</td><td>${totals.B.toLocaleString()}万</td><td>—</td><td>${totals.C.toLocaleString()}万</td><td>—</td></tr></tfoot>
+      </table>
+    </div>
+    <h2 class="sec">📈 GMROI分析（社内基準：40%）</h2>
+    <div class="card btbl-wrap" style="margin-bottom:22px">
+      <table class="btbl">
+        <thead><tr><th>シナリオ</th><th>粗利率</th><th>年間回転</th><th>GMROI</th><th>判定</th></tr></thead>
+        <tbody>${gmRows.map(r=>`<tr><td>${r.l}</td><td>${r.rate}%</td><td>×${r.rot}</td><td class="${r.rc}">${r.g}%</td><td>${badge(r.g)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="card" style="padding:13px 16px">
+      <p style="font-size:12px;color:var(--text-m);line-height:1.8">
+        <strong style="color:var(--text)">原価合計：${Math.round(cost*10000).toLocaleString()}円</strong>（${cost}万円）<br>
+        損失リスクなし：最悪シナリオ（Cプラン270日）でも粗利${Math.round(grosses.C)}万円（${rates.C}%）を確保。
+      </p>
+    </div>`;
+}
+function openBudgetModal(){
+  const plans=getPlans();
+  const cost=D.cost||3878.18;
+  document.getElementById('bm-cost').value=cost;
+  const letters=['A','B','C'];
+  document.getElementById('bm-plans').innerHTML=letters.map(k=>`
+    <div style="margin-top:12px;padding:10px 12px;border:1px solid var(--border);border-radius:6px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">${plans[k].label}</div>
+      ${D.plots.map((p,i)=>`
+        <div style="display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;align-items:end;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-m);padding-bottom:6px">${p.label}</span>
+          <div>
+            <div style="font-size:10px;color:var(--text-m);margin-bottom:3px">価格（万円）</div>
+            <input type="number" data-plan="${k}" data-idx="${i}" data-field="prices" value="${plans[k].prices[i]}" step="10" class="bm-input" style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface-2);font-size:13px;color:var(--text)">
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text-m);margin-bottom:3px">坪単価（万円）</div>
+            <input type="number" data-plan="${k}" data-idx="${i}" data-field="tsubo" value="${plans[k].tsubo[i]}" step="0.01" class="bm-input" style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface-2);font-size:13px;color:var(--text)">
+          </div>
+        </div>
+      `).join('')}
+    </div>`).join('');
+  document.getElementById('budget-modal').classList.add('on');
+}
+function closeBudgetModal(){document.getElementById('budget-modal').classList.remove('on');}
+function saveBudget(){
+  const cost=parseFloat(document.getElementById('bm-cost').value);
+  if(isNaN(cost)||cost<0)return;
+  if(!D.plans)D.plans=JSON.parse(JSON.stringify(DEF.plans));
+  document.querySelectorAll('.bm-input').forEach(el=>{
+    const k=el.dataset.plan,i=parseInt(el.dataset.idx),f=el.dataset.field,v=parseFloat(el.value);
+    if(!isNaN(v)){D.plans[k][f][i]=v;}
+  });
+  D.cost=cost;
+  save();renderBudget();renderPlots();updateHeader();closeBudgetModal();toast('金額を更新しました');
+}
+document.getElementById('budget-modal').addEventListener('click',e=>{if(e.target===document.getElementById('budget-modal'))closeBudgetModal();});
+
 // ── Docs ──
 const DOC_CATS = ['📄 販売図面・分割図','📑 見積・契約書類','📷 現地写真・測量','🏛️ 行政・登記書類','📋 その他'];
 const DOC_ICONS = {'📄 販売図面・分割図':'📄','📑 見積・契約書類':'📑','📷 現地写真・測量':'📷','🏛️ 行政・登記書類':'🏛️','📋 その他':'📋'};
@@ -1323,7 +1415,7 @@ function startEditField(el,_){el.contentEditable='true';el.focus();const s=windo
 function saveProjField(el,key){el.contentEditable='false';const v=el.textContent.trim();if(v){D[key]=v;save();}else{el.textContent=D[key];}toast('更新しました');}
 
 function renderAll(){
-  renderPlots();renderMilestones();renderTasks();renderContacts();renderPhases();renderDocs();renderLinks();updateHeader();
+  renderPlots();renderMilestones();renderTasks();renderContacts();renderPhases();renderBudget();renderDocs();renderLinks();updateHeader();
   document.getElementById('proj-name').textContent=D.projName||DEF.projName;
   document.getElementById('proj-sub').textContent=D.projSub||DEF.projSub;
 }
