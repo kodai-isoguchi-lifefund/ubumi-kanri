@@ -566,7 +566,15 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
     <label>タスク内容 *</label>
     <textarea id="task-text-in" rows="3" placeholder="例：販売図面をHMへ送付"></textarea>
     <label>担当者</label>
-    <input type="text" id="task-assignee-in" placeholder="例：磯口">
+    <select id="task-assignee-in">
+      <option value="磯口">磯口</option>
+      <option value="山本">山本</option>
+      <option value="望月">望月</option>
+      <option value="成山">成山</option>
+      <option value="清水">清水</option>
+      <option value="佐藤">佐藤</option>
+      <option value="望月・成山・清水・磯口">望月・成山・清水・磯口（全員）</option>
+    </select>
     <label>期限</label>
     <input type="date" id="task-due-in">
     <label>備考（任意）</label>
