@@ -270,6 +270,9 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
 .modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--accent);background:var(--surface)}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 .btn-cancel{padding:7px 14px;background:var(--surface-2);color:var(--text-m);border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:13px;cursor:pointer}
+/* Drag & drop */
+.dragging{opacity:.35;cursor:grabbing}
+.drag-over{background:var(--accent-lt)!important;outline:1.5px dashed var(--accent);border-radius:6px}
 /* Util */
 .mt8{margin-top:8px}.mb8{margin-bottom:8px}.mt20{margin-top:20px}
 @media(max-width:600px){
@@ -824,14 +827,14 @@ function setMemo(id,v){const p=D.plots.find(p=>p.id===id);if(p){p.memo=v;save();
 // Milestones
 function renderMilestones(){
   const today=new Date();
-  const sorted=[...D.milestones].sort((a,b)=>a.date.localeCompare(b.date));
+  const sorted=D.milestones;
   document.getElementById('tl').innerHTML=sorted.map(m=>{
     const md=new Date(m.date);
     const isToday=md.toDateString()===today.toDateString();
     const past=md<today;
     const dotCls=m.done?'done':(past||isToday)?'cur':'';
     const ds=`${md.getFullYear()}年${md.getMonth()+1}月${md.getDate()}日`;
-    return `<div class="tl-item">
+    return `<div class="tl-item" draggable="true" data-drag="${m.id}">
       <div class="tl-dot ${dotCls}"></div>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <div style="min-width:0">
@@ -846,6 +849,7 @@ function renderMilestones(){
       </div>
     </div>`;
   }).join('');
+  initDrag('tl',D.milestones,renderMilestones);
 }
 function openMilestoneModal(id){
   const m=id?D.milestones.find(x=>x.id===id):null;
@@ -1052,6 +1056,40 @@ function saveContact(){
   }
   save();renderContacts();closeContactModal();toast(idStr?'更新しました':'追加しました');
 }
+function initDrag(containerId,arr,rerender){
+  const container=document.getElementById(containerId);
+  if(!container)return;
+  let src=null;
+  container.querySelectorAll('[data-drag]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      src=el;
+      e.dataTransfer.effectAllowed='move';
+      setTimeout(()=>el.classList.add('dragging'),0);
+    });
+    el.addEventListener('dragend',()=>{
+      el.classList.remove('dragging');
+      container.querySelectorAll('[data-drag]').forEach(x=>x.classList.remove('drag-over'));
+      src=null;
+    });
+    el.addEventListener('dragover',e=>{
+      e.preventDefault();
+      if(el!==src){
+        container.querySelectorAll('[data-drag]').forEach(x=>x.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      }
+    });
+    el.addEventListener('drop',e=>{
+      e.preventDefault();
+      if(!src||src===el)return;
+      const si=arr.findIndex(x=>x.id===parseInt(src.dataset.drag));
+      const ti=arr.findIndex(x=>x.id===parseInt(el.dataset.drag));
+      if(si<0||ti<0)return;
+      const [item]=arr.splice(si,1);
+      arr.splice(ti,0,item);
+      save();rerender();toast('順序を変更しました');
+    });
+  });
+}
 function safeDelete(btn,fn){
   if(btn.dataset.pend==='1'){fn();return;}
   const orig=btn.textContent;
@@ -1077,7 +1115,7 @@ function renderPhases(){
   const el=document.getElementById('phases-grid');
   if(!el)return;
   el.innerHTML=(D.phases||[]).map(p=>{
-    return `<div class="ph-row">
+    return `<div class="ph-row" draggable="true" data-drag="${p.id}">
       <div>
         <div class="ph-name">${p.name}</div>
         ${p.note?`<div class="ph-note">${p.note}</div>`:''}
@@ -1092,6 +1130,7 @@ function renderPhases(){
       </div>
     </div>`;
   }).join('');
+  initDrag('phases-grid',D.phases,renderPhases);
 }
 
 function cyclePhase(id){
