@@ -321,6 +321,10 @@ div:hover>.link-edit,div:hover>.link-x{opacity:1}
 
 <!-- 区画管理 -->
 <div class="panel on" id="tab-plots">
+  <div style="background:var(--accent-lt);border:1px solid var(--accent);border-radius:var(--r);padding:12px 15px;margin-bottom:18px">
+    <div style="font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.06em;margin-bottom:6px">📢 磯口からの伝達事項</div>
+    <textarea id="notice-area" placeholder="チームへの連絡・注意事項を入力..." style="width:100%;background:transparent;border:none;outline:none;font-family:var(--sans);font-size:13px;color:var(--text);resize:none;min-height:44px;line-height:1.6" oninput="autoResizeNotice(this)" onchange="saveNotice(this.value)"></textarea>
+  </div>
   <div class="strip" id="strip"></div>
   <h2 class="sec">🏡 区画別ステータス</h2>
   <div class="pgrid" id="pgrid"></div>
@@ -731,6 +735,7 @@ const DEF = {
     {id:14,name:'清水',role:'営業・客付け',color:''},
     {id:15,name:'佐藤',role:'外構担当',color:''},
   ],
+  notice:'',
   nextId:100,
   docs:[],
   links:[
@@ -742,6 +747,8 @@ const DEF = {
 
 let D = JSON.parse(JSON.stringify(DEF));
 function save(){ DB_REF.set(D); }
+function saveNotice(v){D.notice=v;save();}
+function autoResizeNotice(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 
 // Toast
 let _tt;
@@ -1514,6 +1521,7 @@ function renderAll(){
   renderPlots();renderMilestones();renderTasks();renderContacts();renderPhases();renderBudget();renderTeam();renderDocs();renderLinks();updateHeader();
   document.getElementById('proj-name').textContent=D.projName||DEF.projName;
   document.getElementById('proj-sub').textContent=D.projSub||DEF.projSub;
+  const na=document.getElementById('notice-area');if(na&&document.activeElement!==na){na.value=D.notice||'';autoResizeNotice(na);}
 }
 
 // Firebase リアルタイム同期
